@@ -101,6 +101,14 @@ describe('S3Adapter tests', () => {
       var s3 = new S3Adapter('accessKey', 'secretKey', 'myBucket', options);
       expect(s3.getFileLocation(config, 'test.png')).toEqual('https://myBucket.s3.amazonaws.com/foo/bar/test.png');
     });
+
+    it('should use accelerated endpoint', () => {
+      delete options.baseUrl;
+      options.useAccelerateEndpoint = true
+      
+      var s3 = new S3Adapter('accessKey', 'secretKey', 'myBucket', options);
+      expect(s3.getFileLocation(config, 'test.png')).toEqual('https://myBucket.s3-accelerate.amazonaws.com/foo/bar/test.png');
+    });
   });
 
 

@@ -19,12 +19,14 @@ function S3Adapter() {
   this._baseUrlDirect = options.baseUrlDirect;
   this._signatureVersion = options.signatureVersion;
   this._globalCacheControl = options.globalCacheControl;
+  this._useAccelerateEndpoint = options.useAccelerateEndpoint;
 
   let s3Options = {
     params: { Bucket: this._bucket },
     region: this._region,
     signatureVersion: this._signatureVersion,
-    globalCacheControl: this._globalCacheControl
+    globalCacheControl: this._globalCacheControl,
+    useAccelerateEndpoint: this._useAccelerateEndpoint,
   };
 
   if (options.accessKey && options.secretKey) {
@@ -124,7 +126,8 @@ S3Adapter.prototype.getFileLocation = function(config, filename) {
     } else if (this._baseUrl) {
       return `${this._baseUrl}/${this._bucketPrefix + filename}`;
     } else {
-      return `https://${this._bucket}.s3.amazonaws.com/${this._bucketPrefix + filename}`;
+      let accelerate = this._useAccelerateEndpoint ? '-accelerate' : '';
+      return `https://${this._bucket}.s3${accelerate}.amazonaws.com/${this._bucketPrefix + filename}`;
     }
   }
   return (config.mount + '/files/' + config.applicationId + '/' + encodeURIComponent(filename));
